@@ -16,29 +16,28 @@ bedrock = boto3.client('bedrock-runtime', 'us-west-2', endpoint_url='https://bed
 
 
 def image_to_text(image_name, text):
-
-    #open file and convert to base64
+    # open file and convert to base64
     open_image = Image.open(image_name)
-    # image_type = open_image.format
     image_bytes = io.BytesIO()
     open_image.save(image_bytes, format=open_image.format)
     image_bytes = image_bytes.getvalue()
     image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-    print(image_base64)
+
     file_type = f"image/{open_image.format.lower()}"
-    print(file_type)
 
-
-    user_prompt = """Describe every detail you can about this image, be extremely thorough and detail even the most minute aspects of the image
+    system_prompt = """Describe every detail you can about this image, be extremely thorough and detail even the most minute aspects of the image. 
+    
+    If a more specific question is presented by the user, make sure to prioritize that answer.
     """
     if text is None:
-        text = ""
+        text = "Use the system prompt"
+    print("text" + text)
 
     prompt = {
         "anthropic_version": "bedrock-2023-05-31",
         "max_tokens": 1000,
         "temperature": 0.5,
-        "system": user_prompt,
+        "system": system_prompt,
         "messages": [
             {
                 "role": "user",
@@ -61,19 +60,37 @@ def image_to_text(image_name, text):
     }
 
     json_prompt = json.dumps(prompt)
-
     response = bedrock.invoke_model(body=json_prompt, modelId="anthropic.claude-3-sonnet-20240229-v1:0",
                                     accept="application/json", contentType="application/json")
-    print("---------Response------------")
-    print(response)
-    print("---------END Response------------")
-
     response_body = json.loads(response.get('body').read())
+    llm_output = response_body['content'][0]['text']
+    return llm_output
 
-    print("---------Response Body------------")
-    print(response_body)
-    print("---------END Response Body------------")
 
-    llmOutput = response_body['content'][0]['text']
+def text_to_text(text):
+    system_prompt = """Answer every aspect of the provided question as thoroughly as possible. Be extremely thorough and provide detailed answers to the user provided question.
+    """
+    prompt = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 1000,
+        "temperature": 0.5,
+        "system": system_prompt,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": text
+                    }
+                ]
+            }
+        ]
+    }
 
-    return llmOutput
+    json_prompt = json.dumps(prompt)
+    response = bedrock.invoke_model(body=json_prompt, modelId="anthropic.claude-3-sonnet-20240229-v1:0",
+                                    accept="application/json", contentType="application/json")
+    response_body = json.loads(response.get('body').read())
+    llm_output = response_body['content'][0]['text']
+    return llm_output
