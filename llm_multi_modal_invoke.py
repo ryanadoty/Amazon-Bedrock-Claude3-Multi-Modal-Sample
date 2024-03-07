@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import os
 import base64
 import io
-from io import BytesIO
 from PIL import Image
 
 # loading in variables from .env file
