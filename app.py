@@ -29,7 +29,7 @@ with st.container():
         if File is not None:
             st.image(File)
             # determine the path to temporarily save the PDF file that was uploaded
-            save_folder = "/Users/rdoty/PycharmProjects/Amazon-Bedrock-Claude3-Multi-Modal-Sample"
+            save_folder = os.getenv("save_folder")
             # create a posix path of save_folder and the file name
             save_path = Path(save_folder, File.name)
             # write the uploaded PDF to the save_folder you specified

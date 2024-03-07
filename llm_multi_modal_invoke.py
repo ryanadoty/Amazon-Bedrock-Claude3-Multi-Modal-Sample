@@ -11,7 +11,7 @@ from PIL import Image
 load_dotenv()
 
 # instantiating the Bedrock client, and passing in the CLI profile
-boto3.setup_default_session(profile_name="admin")
+boto3.setup_default_session(profile_name=os.getenv("profile_name"))
 bedrock = boto3.client('bedrock-runtime', 'us-west-2', endpoint_url='https://bedrock-runtime.us-west-2.amazonaws.com')
 
 
