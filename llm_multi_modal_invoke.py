@@ -29,9 +29,8 @@ def image_to_text(image_name, text):
     
     If a more specific question is presented by the user, make sure to prioritize that answer.
     """
-    if text is None:
+    if text == "":
         text = "Use the system prompt"
-    print("text" + text)
 
     prompt = {
         "anthropic_version": "bedrock-2023-05-31",
