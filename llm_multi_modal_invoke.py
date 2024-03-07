@@ -15,6 +15,14 @@ bedrock = boto3.client('bedrock-runtime', 'us-west-2', endpoint_url='https://bed
 
 
 def image_to_text(image_name, text):
+    """
+    This function is used to perform an image to text llm invocation against Claude 3. It can work with just an image or
+    text. If the user does not use any text, a default prompt will be passed in along with the system prompt as Claude 3 expects
+    text in the text block of the prompt.
+    :param image_name:
+    :param text:
+    :return:
+    """
     # open file and convert to base64
     open_image = Image.open(image_name)
     image_bytes = io.BytesIO()
